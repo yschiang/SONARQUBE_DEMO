@@ -1,0 +1,382 @@
+# =============================================================================
+# CI/CD Integration Examples for SonarQube Analysis
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# GitHub Actions Example
+# -----------------------------------------------------------------------------
+# File: .github/workflows/sonarqube.yml
+
+name: SonarQube Analysis
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # For better analysis
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Run Maven build and SonarQube analysis
+        run: |
+          mvn clean compile
+          mvn sonar:sonar \
+            -Dsonar.host.url=${{ secrets.SONAR_URL }} \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.projectKey=${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Generate CI Summary
+        run: |
+          python3 ci-sonar-analyzer.py \
+            --server-url ${{ secrets.SONAR_URL }} \
+            --token ${{ secrets.SONAR_TOKEN }} \
+            --project-key ${{ github.repository }} \
+            --format markdown \
+            --output sonar-summary.md \
+            --wait-for-analysis 30
+      
+      - name: Comment PR with SonarQube Report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('sonar-summary.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+      
+      - name: Quality Gate Check
+        run: |
+          python3 ci-sonar-analyzer.py \
+            --server-url ${{ secrets.SONAR_URL }} \
+            --token ${{ secrets.SONAR_TOKEN }} \
+            --project-key ${{ github.repository }} \
+            --exit-code \
+            --wait-for-analysis 30
+
+# -----------------------------------------------------------------------------
+# GitLab CI Example
+# -----------------------------------------------------------------------------
+# File: .gitlab-ci.yml
+
+stages:
+  - build
+  - test
+  - quality
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
+sonarqube-check:
+  stage: quality
+  image: maven:3.8.6-eclipse-temurin-17
+  script:
+    - mvn clean compile
+    - mvn sonar:sonar 
+      -Dsonar.host.url=$SONAR_URL 
+      -Dsonar.token=$SONAR_TOKEN 
+      -Dsonar.projectKey=$CI_PROJECT_PATH
+    - |
+      # Generate summary report
+      python3 ci-sonar-analyzer.py \
+        --server-url $SONAR_URL \
+        --token $SONAR_TOKEN \
+        --project-key $CI_PROJECT_PATH \
+        --wait-for-analysis 30 \
+        --exit-code
+  artifacts:
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+  only:
+    - main
+    - merge_requests
+
+# -----------------------------------------------------------------------------
+# Jenkins Pipeline Example
+# -----------------------------------------------------------------------------
+# File: Jenkinsfile
+
+pipeline {
+    agent any
+    
+    environment {
+        SONAR_TOKEN = credentials('sonar-token')
+        SONAR_URL = 'http://sonarqube:9000'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=${JOB_NAME} \
+                          -Dsonar.host.url=${SONAR_URL} \
+                          -Dsonar.token=${SONAR_TOKEN}
+                    '''
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
+                script {
+                    // Wait for SonarQube analysis to complete
+                    timeout(time: 5, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+                
+                // Generate detailed report
+                sh '''
+                    python3 ci-sonar-analyzer.py \
+                      --server-url ${SONAR_URL} \
+                      --token ${SONAR_TOKEN} \
+                      --project-key ${JOB_NAME} \
+                      --output sonar-report.txt \
+                      --wait-for-analysis 30
+                '''
+                
+                // Archive the report
+                archiveArtifacts artifacts: 'sonar-report.txt'
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Cleanup
+            cleanWs()
+        }
+        failure {
+            // Send notification on failure
+            emailext (
+                subject: "SonarQube Quality Gate Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+                body: "The SonarQube quality gate has failed for ${env.JOB_NAME}. Check the report for details.",
+                to: "${env.CHANGE_AUTHOR_EMAIL}"
+            )
+        }
+    }
+}
+
+# -----------------------------------------------------------------------------
+# Azure DevOps Example
+# -----------------------------------------------------------------------------
+# File: azure-pipelines.yml
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+
+steps:
+- task: Cache@2
+  inputs:
+    key: 'maven | "$(Agent.OS)" | **/pom.xml'
+    restoreKeys: |
+      maven | "$(Agent.OS)"
+      maven
+    path: $(MAVEN_CACHE_FOLDER)
+  displayName: Cache Maven packages
+
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean compile'
+    options: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  displayName: 'Maven Build'
+
+- task: SonarQubePrepare@4
+  inputs:
+    SonarQube: 'SonarQube-Connection'
+    scannerMode: 'Maven'
+    configMode: 'manual'
+    cliProjectKey: '$(Build.Repository.Name)'
+
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'sonar:sonar'
+    options: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  displayName: 'SonarQube Analysis'
+
+- task: SonarQubePublish@4
+  inputs:
+    pollingTimeoutSec: '300'
+
+- script: |
+    python3 ci-sonar-analyzer.py \
+      --server-url $(SONAR_URL) \
+      --token $(SONAR_TOKEN) \
+      --project-key $(Build.Repository.Name) \
+      --output $(Agent.TempDirectory)/sonar-summary.txt \
+      --exit-code \
+      --wait-for-analysis 30
+  displayName: 'Generate SonarQube Summary'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '$(Agent.TempDirectory)/sonar-summary.txt'
+    testRunTitle: 'SonarQube Analysis Summary'
+  condition: always()
+
+# -----------------------------------------------------------------------------
+# Docker Compose for Local Development
+# -----------------------------------------------------------------------------
+# File: docker-compose.yml
+
+version: '3.8'
+services:
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+  ci-analyzer:
+    image: python:3.11-alpine
+    container_name: sonar-ci-analyzer
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    environment:
+      - SONAR_URL=http://sonarqube:9000
+      - SONAR_TOKEN=${SONAR_TOKEN}
+      - PROJECT_KEY=${PROJECT_KEY}
+    depends_on:
+      - sonarqube
+    command: |
+      sh -c "
+        pip install requests &&
+        python3 ci-sonar-analyzer.py \
+          --server-url http://sonarqube:9000 \
+          --token $SONAR_TOKEN \
+          --project-key $PROJECT_KEY \
+          --wait-for-analysis 60
+      "
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+
+# -----------------------------------------------------------------------------
+# Makefile for Easy Local Testing
+# -----------------------------------------------------------------------------
+# File: Makefile
+
+.PHONY: sonar-start sonar-stop sonar-analyze sonar-report sonar-check
+
+# Configuration
+SONAR_URL ?= http://localhost:9999
+SONAR_TOKEN ?= your-token-here
+PROJECT_KEY ?= sonarqube-demo
+
+# Start SonarQube server
+sonar-start:
+	docker run -d --name sonarqube -p 9999:9000 sonarqube:latest
+	@echo "Waiting for SonarQube to start..."
+	@sleep 60
+	@echo "SonarQube available at: $(SONAR_URL)"
+
+# Stop SonarQube server
+sonar-stop:
+	docker stop sonarqube || true
+	docker rm sonarqube || true
+
+# Run SonarQube analysis
+sonar-analyze:
+	mvn clean compile sonar:sonar \
+		-Dsonar.host.url=$(SONAR_URL) \
+		-Dsonar.token=$(SONAR_TOKEN) \
+		-Dsonar.projectKey=$(PROJECT_KEY)
+
+# Generate CI report
+sonar-report:
+	python3 ci-sonar-analyzer.py \
+		--server-url $(SONAR_URL) \
+		--token $(SONAR_TOKEN) \
+		--project-key $(PROJECT_KEY) \
+		--wait-for-analysis 30
+
+# Check quality gate (with exit code)
+sonar-check:
+	python3 ci-sonar-analyzer.py \
+		--server-url $(SONAR_URL) \
+		--token $(SONAR_TOKEN) \
+		--project-key $(PROJECT_KEY) \
+		--exit-code \
+		--wait-for-analysis 30
+
+# Full pipeline
+sonar-pipeline: sonar-analyze sonar-check
+
+# -----------------------------------------------------------------------------
+# Environment Configuration Examples
+# -----------------------------------------------------------------------------
+
+# .env file for local development
+# SONAR_URL=http://localhost:9999
+# SONAR_TOKEN=squ_your_token_here
+# PROJECT_KEY=my-project
+# FORMAT=text
+# WAIT_TIME=30
+
+# CI Environment Variables (set in your CI system):
+# SONAR_URL: Your SonarQube server URL
+# SONAR_TOKEN: Authentication token (store securely)
+# PROJECT_KEY: Usually derived from repository name

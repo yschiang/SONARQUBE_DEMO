@@ -1,0 +1,264 @@
+{
+  "timestamp": "2026-01-02T06:21:52.668077",
+  "project": "sonarqube-demo",
+  "quality_gate": {
+    "status": "OK",
+    "passed": true
+  },
+  "metrics": {
+    "coverage": "0.0",
+    "bugs": "21",
+    "reliability_rating": "3.0",
+    "code_smells": "9",
+    "duplicated_lines_density": "0.0",
+    "security_rating": "1.0",
+    "ncloc": "301",
+    "vulnerabilities": "0",
+    "sqale_rating": "1.0"
+  },
+  "issues": {
+    "total": 30,
+    "by_severity": {
+      "BLOCKER": 0,
+      "CRITICAL": 0,
+      "MAJOR": 24,
+      "MINOR": 6,
+      "INFO": 0
+    },
+    "by_type": {
+      "BUG": 21,
+      "VULNERABILITY": 0,
+      "CODE_SMELL": 9
+    },
+    "by_category": {
+      "RELIABILITY": 21,
+      "SECURITY": 0,
+      "MAINTAINABILITY": 9
+    },
+    "category_details": {
+      "RELIABILITY": [
+        {
+          "rule": "java:S3986",
+          "message": "Use \"y\" instead of \"Y\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 31
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 32
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 36
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 48
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 49
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 67
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 68
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 69
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 90
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 91
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 92
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 109
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 110
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 111
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 132
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DateFormatDemo.java",
+          "line": 133
+        },
+        {
+          "rule": "java:S2259",
+          "message": "A \"NullPointerException\" could be thrown; \"userType\" is nullable here.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 67
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/FooBarController.java",
+          "line": 94
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/FooBarController.java",
+          "line": 95
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/FooBarController.java",
+          "line": 96
+        },
+        {
+          "rule": "java:S3986",
+          "message": "Use \"yyyy\" instead of \"YYYY\" to output the year.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/FooBarController.java",
+          "line": 97
+        }
+      ],
+      "SECURITY": [],
+      "MAINTAINABILITY": [
+        {
+          "rule": "java:S1068",
+          "message": "Remove this unused \"DEMO_ACCESS_KEY\" private field.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 11
+        },
+        {
+          "rule": "java:S1170",
+          "message": "Make this final field static too.",
+          "severity": "MINOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 11
+        },
+        {
+          "rule": "java:S116",
+          "message": "Rename this field \"DEMO_ACCESS_KEY\" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.",
+          "severity": "MINOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 11
+        },
+        {
+          "rule": "java:S1170",
+          "message": "Make this final field static too.",
+          "severity": "MINOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 12
+        },
+        {
+          "rule": "java:S1068",
+          "message": "Remove this unused \"DEMO_SECRET_KEY\" private field.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 12
+        },
+        {
+          "rule": "java:S116",
+          "message": "Rename this field \"DEMO_SECRET_KEY\" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.",
+          "severity": "MINOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 12
+        },
+        {
+          "rule": "java:S1170",
+          "message": "Make this final field static too.",
+          "severity": "MINOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 13
+        },
+        {
+          "rule": "java:S1068",
+          "message": "Remove this unused \"DEMO_DB_URL\" private field.",
+          "severity": "MAJOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 13
+        },
+        {
+          "rule": "java:S116",
+          "message": "Rename this field \"DEMO_DB_URL\" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.",
+          "severity": "MINOR",
+          "component": "src/main/java/com/example/demo/DemoService.java",
+          "line": 13
+        }
+      ]
+    },
+    "critical_issues": [],
+    "new_issues": 0
+  },
+  "ci_decision": {
+    "should_fail": false,
+    "has_warnings": false,
+    "is_passing": true
+  },
+  "dashboard_url": "http://localhost:9999/dashboard?id=sonarqube-demo"
+}

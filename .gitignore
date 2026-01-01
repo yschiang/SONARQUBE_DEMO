@@ -1,0 +1,59 @@
+# Maven build artifacts
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# SonarQube working directories
+.scannerwork/
+.sonar/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# CI/CD generated reports (keep in reports/ folder but ignore root level)
+/*.txt
+/*.json
+/*.md
+!README.md
+
+# Environment and config files with secrets
+.env
+*.properties.local
+sonar-project.properties.local
+
+# Node modules (if any JS tools are added)
+node_modules/
+npm-debug.log*
+
+# Python cache (for CI tools)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/

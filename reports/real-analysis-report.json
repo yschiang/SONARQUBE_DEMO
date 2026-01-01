@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-01-02T06:17:56.575425",
+  "project": "sonarqube-demo",
+  "quality_gate": {
+    "status": "OK",
+    "passed": true
+  },
+  "metrics": {
+    "coverage": "0.0",
+    "bugs": "21",
+    "reliability_rating": "3.0",
+    "code_smells": "9",
+    "duplicated_lines_density": "0.0",
+    "security_rating": "1.0",
+    "ncloc": "301",
+    "vulnerabilities": "0",
+    "sqale_rating": "1.0"
+  },
+  "issues": {
+    "total": 30,
+    "by_severity": {
+      "BLOCKER": 0,
+      "CRITICAL": 0,
+      "MAJOR": 24,
+      "MINOR": 6,
+      "INFO": 0
+    },
+    "by_type": {
+      "BUG": 21,
+      "VULNERABILITY": 0,
+      "CODE_SMELL": 9
+    },
+    "critical_issues": [],
+    "new_issues": 0
+  },
+  "ci_decision": {
+    "should_fail": false,
+    "has_warnings": false,
+    "is_passing": true
+  },
+  "dashboard_url": "http://localhost:9999/dashboard?id=sonarqube-demo"
+}

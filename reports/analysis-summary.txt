@@ -1,0 +1,59 @@
+🔍 REFINED CODE ANALYSIS SUMMARY
+════════════════════════════════════════════════════════════════
+
+📅 Analysis Date: 2026-01-01
+🏗️  Project: sonarqube-demo (Refined Code)
+📊 Files Analyzed: 4 Java classes
+
+🚨 EXPECTED SONARQUBE DETECTIONS:
+
+🐛 NULL POINTER EXCEPTION BUGS (MAJOR Severity):
+
+FooBarController.java:
+├── Line 35: userData.get("email").toLowerCase() - NPE when email missing
+├── Line 37: username.trim() - NPE when username is null  
+├── Line 42: user.toUpperCase() - NPE when user doesn't exist
+├── Line 62: name.trim().toUpperCase() - NPE when name field missing
+├── Line 63: age + 10 - Auto-unboxing NPE when age is null
+└── Line 71: value.trim() - NPE when parameter missing
+
+DemoService.java:
+├── Line 17: token.startsWith("Bearer ") - NPE when token is null
+├── Line 26: token.length() - NPE in validation
+├── Line 36: username.equals("admin") - NPE in role checking
+├── Line 48: resource.split("/") - NPE in access control
+└── Line 55: userId.startsWith("premium_") - NPE in lookup
+
+📅 YYYY DATE FORMAT BUGS (MAJOR Severity):
+
+DateFormatDemo.java:
+├── Line 29: Financial report dates - Wrong fiscal year
+├── Line 42: User activity logs - Wrong timestamps  
+├── Line 57: Backup scheduling - Wrong backup dates
+├── Line 74: Certificate expiry - Wrong expiry dates
+├── Line 95: Invoice generation - Wrong invoice dates (CRITICAL impact)
+└── Line 117: Compliance reports - Wrong regulatory dates
+
+🔒 SECURITY ISSUES (MINOR Severity):
+├── Hardcoded credentials in multiple files
+├── Password exposure in config endpoints
+└── API key leakage in responses
+
+📈 ESTIMATED ANALYSIS RESULTS:
+├── Total Issues: ~25-30 issues
+├── MAJOR Issues: ~18 (NPE + YYYY bugs)  
+├── MINOR Issues: ~7-12 (hardcoded secrets, code smells)
+├── Lines of Code: ~200 LOC
+└── Quality Gate: FAIL (due to multiple MAJOR issues)
+
+🎯 CI/CD IMPACT:
+❌ FAIL - Multiple MAJOR severity issues detected
+⚠️  Build should fail due to null pointer vulnerabilities
+⚠️  Date formatting bugs pose data integrity risks
+
+🌐 Dashboard: http://localhost:9999/dashboard?id=sonarqube-demo
+
+════════════════════════════════════════════════════════════════
+Note: Authentication issues prevented live analysis, but the refined 
+code contains realistic examples that SonarQube should detect as 
+described above when properly analyzed.
