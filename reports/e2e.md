@@ -113,13 +113,73 @@ This forms the audit trail:
 
 ```mermaid
 flowchart TD
-  A[Code changes<br/>(feature branch)] --> B[Open PR in Azure DevOps<br/>Draft → Ready]
-  B --> C[CI Validation<br/>(Build + Tests + SonarQube PR Analysis)]
-  C --> D[Human Code Review]
-  D --> E[Merge to main]
-  E --> F[Post-merge CI + RC]
-  F --> G[PRR Meeting<br/>(Hard Gate)]
-  G --> H[CD Execution]
-  H --> I[Post-deploy Verification]
-  I --> J[Close Change Record]
+
+  %% ========== DEV & PR ==========
+  subgraph DEV_PR[DEV and PR]
+    A[Code changes]
+    B[Open Pull Request]
+    A --> B
+  end
+
+  %% ========== CI & SONAR ==========
+  subgraph CI_SONAR[CI and SonarQube Gate]
+    C[CI pipeline]
+    C1[Build]
+    C2[Unit tests]
+    C3[Static checks]
+    C4[SonarQube PR analysis]
+    C5[Quality gate]
+
+    C --> C1
+    C --> C2
+    C --> C3
+    C --> C4
+    C4 --> C5
+  end
+
+  %% ========== REVIEW & MERGE ==========
+  subgraph REVIEW_MERGE[Code Review and Merge]
+    D[PR status checks]
+    E[Human code review]
+    F{All checks pass}
+    G[Fix and update PR]
+    H[Merge to main]
+
+    D --> E
+    E --> F
+    F -- No --> G
+    F -- Yes --> H
+  end
+
+  %% ========== RELEASE & PRR ==========
+  subgraph RELEASE_PRR[Release and PRR]
+    I[Post merge CI]
+    J[Release candidate]
+    K[Production readiness review]
+    L{PRR decision}
+
+    I --> J
+    J --> K
+    K --> L
+  end
+
+  %% ========== CD & VERIFY ==========
+  subgraph CD_VERIFY[CD and Verification]
+    M[CD execution]
+    N[Deploy to production]
+    O[Post deploy verification]
+    P[Close change record]
+
+    M --> N
+    N --> O
+    O --> P
+  end
+
+  %% ========== FLOW CONNECTIONS ==========
+  B --> C
+  C5 --> D
+  G --> C
+  H --> I
+  L -- No Go --> A
+  L -- Go --> M
 ```
